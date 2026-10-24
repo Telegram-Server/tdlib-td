@@ -77,11 +77,7 @@ class NetQueryDispatcher {
     ActorOwn<SessionMultiProxy> upload_session_;
   };
   std::array<Dc, DcId::MAX_RAW_DC_ID> dcs_;
-#if TD_EMSCRIPTEN  // FIXME
   std::atomic<int32> main_dc_id_{2};
-#else
-  std::atomic<int32> main_dc_id_{1};
-#endif
   ActorOwn<PublicRsaKeyWatchdog> public_rsa_key_watchdog_;
   std::mutex mutex_;
   std::shared_ptr<Guard> td_guard_;

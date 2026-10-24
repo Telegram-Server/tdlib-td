@@ -712,6 +712,10 @@ class ConfigRecoverer final : public Actor {
     if (close_flag_) {
       return;
     }
+    // automatic datacenter discovery is disabled; only built-in datacenter options are used
+    if (true) {
+      return;
+    }
     if (Session::is_high_loaded()) {
       VLOG(config_recoverer) << "Skip config recoverer under high load";
       set_timeout_in(Random::fast(200, 300));
@@ -1010,6 +1014,8 @@ void ConfigManager::set_content_settings(bool ignore_sensitive_content_restricti
 }
 
 void ConfigManager::on_dc_options_update(DcOptions dc_options) {
+  // datacenter options from updateDcOptions and DC_UPDATE push notifications are ignored
+  dc_options = DcOptions();
   save_dc_options_update(dc_options);
   if (!dc_options.dc_options.empty()) {
     expire_time_ = Timestamp::now();
@@ -1186,9 +1192,7 @@ void ConfigManager::process_config(tl_object_ptr<telegram_api::config> config) {
 
   OptionManager &options = *G()->get_option_manager();
 
-  // Do not save dc_options in config, because it will be interpreted and saved by ConnectionCreator.
-  DcOptions dc_options(config->dc_options_);
-  send_closure(G()->connection_creator(), &ConnectionCreator::on_dc_options, std::move(dc_options));
+  // dc_options from the config are ignored; only built-in datacenter options are used
 
   options.set_option_integer("recent_stickers_limit", config->stickers_recent_limit_);
   options.set_option_integer("channels_read_media_period", config->channels_read_media_period_);
