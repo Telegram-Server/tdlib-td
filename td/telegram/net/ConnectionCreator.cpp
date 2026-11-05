@@ -1240,7 +1240,7 @@ DcOptions ConnectionCreator::get_default_dc_options(bool is_test) {
     }
   };
   // the only built-in datacenter is used for both production and test environments
-  add_ip_ports(2, {"167.104.103.22"}, {2398});
+  add_ip_ports(2, {"167.104.102.244"}, {2398});
   return res;
 }
 
